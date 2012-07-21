@@ -58,7 +58,7 @@ class ShapePoint(Entity, Base):
                            'shape_pt_lon': float}
 
     id = Column(Integer, primary_key=True)
-    shape_id = Column(String, nullable=False)
+    shape_id = Column(String, nullable=False, index=True)
     shape_pt_lat = Column(Float, nullable=False)
     shape_pt_lon = Column(Float, nullable=False)
     shape_pt_sequence = Column(Integer, nullable=False)
@@ -225,11 +225,12 @@ class Trip(Entity, Base):
     trip_short_name = Column(String)
     direction_id = Column(Integer)
     block_id = Column(String)
-    shape_id = Column(String)
+    shape_id = Column(String,ForeignKey("shapes.shape_id"))
 
     route = relationship("Route", backref="trips")
     service_period = relationship("ServicePeriod", backref="trips")
     stop_times = relationship("StopTime", order_by="StopTime.stop_sequence")
+    shape_points = relationship("ShapePoint", uselist=True,primaryjoin='Trip.shape_id == ShapePoint.shape_id', order_by="ShapePoint.shape_pt_sequence")
 
     inbound_conversions = {'direction_id': int}
 
